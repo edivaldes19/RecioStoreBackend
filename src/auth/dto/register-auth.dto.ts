@@ -1,16 +1,18 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator"
-
 export class RegisterAuthDto {
     @IsNotEmpty()
     @IsString()
+    @MinLength(5)
     name: string
 
     @IsNotEmpty()
     @IsString()
+    @MinLength(5)
     surname: string
 
     @IsNotEmpty()
     @IsString()
+    @MinLength(10)
     phone: string
 
     @IsNotEmpty()
@@ -22,4 +24,5 @@ export class RegisterAuthDto {
     @IsString()
     @MinLength(6)
     password: string
+    rolesIds: string[]
 }
