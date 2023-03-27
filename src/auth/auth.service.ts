@@ -22,10 +22,9 @@ export class AuthService {
         if (phoneExist) throw new HttpException('Teléfono existente.', HttpStatus.CONFLICT)
         const newUser = this.usersRepository.create(user)
         let rolesIds = []
-        if (user.rolesIds != undefined && user.rolesIds != null) rolesIds = user.rolesIds
+        if (user.rolesIds != undefined || user.rolesIds != null || user.rolesIds.length == 0) rolesIds = user.rolesIds
         else rolesIds.push('client')
-        const roles = await this.rolesRepository.findBy({ id: In(user.rolesIds) })
-        newUser.roles = roles
+        newUser.roles = await this.rolesRepository.findBy({ id: In(user.rolesIds) })
         const userSaved = await this.usersRepository.save(newUser)
         const rolesString = userSaved.roles.map(rol => rol.id)
         const { id, name } = userSaved

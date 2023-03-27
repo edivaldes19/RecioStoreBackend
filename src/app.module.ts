@@ -5,8 +5,10 @@ import { AppService } from './app.service'
 import { UsersModule } from './users/users.module'
 import { User } from './users/users.entity'
 import { AuthModule } from './auth/auth.module'
-import { RolesModule } from './roles/roles.module';
-import { Rol } from './roles/rol.entity';
+import { RolesModule } from './roles/roles.module'
+import { Rol } from './roles/rol.entity'
+import { CategoriesModule } from './categories/categories.module';
+import { Category } from './categories/category.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -16,12 +18,13 @@ import { Rol } from './roles/rol.entity';
       username: 'root',
       password: '17040053',
       database: 'recio_store',
-      entities: [User, Rol],
+      entities: [User, Rol, Category],
       synchronize: true
     }),
     UsersModule,
     AuthModule,
-    RolesModule
+    RolesModule,
+    CategoriesModule
   ],
   controllers: [AppController],
   providers: [AppService]

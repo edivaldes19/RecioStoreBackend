@@ -8,9 +8,9 @@ import storage = require('../utils/cloud_storage')
 export class UsersService {
     constructor(@InjectRepository(User) private usersRepository: Repository<User>) { }
     async findAll() {
-        return await this.usersRepository.find({ relations: ['roles'] });
+        return await this.usersRepository.find({ relations: ['roles'] })
     }
-    async updateData(id: number, user: UpdateUserDto) {
+    async updateUser(id: number, user: UpdateUserDto) {
         const userFound = await this.usersRepository.findOneBy({ id })
         if (!userFound) throw new HttpException('Usuario inexistente.', HttpStatus.NOT_FOUND)
         const { name, surname, phone, notification_token } = user
@@ -20,7 +20,7 @@ export class UsersService {
         userFound.notification_token = notification_token
         return await this.usersRepository.save(userFound)
     }
-    async updateImage(file: Express.Multer.File, id: number) {
+    async updateUserImage(id: number, file: Express.Multer.File) {
         const userFound = await this.usersRepository.findOneBy({ id })
         if (!userFound) throw new HttpException('Usuario inexistente.', HttpStatus.NOT_FOUND)
         const url = await storage(file, file.originalname)
