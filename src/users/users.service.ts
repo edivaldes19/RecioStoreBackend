@@ -7,9 +7,6 @@ import storage = require('../utils/cloud_storage')
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User) private usersRepository: Repository<User>) { }
-    async findAll() {
-        return await this.usersRepository.find({ relations: ['roles'] })
-    }
     async updateUser(id: number, user: UpdateUserDto) {
         const userFound = await this.usersRepository.findOneBy({ id })
         if (!userFound) throw new HttpException('Usuario inexistente.', HttpStatus.NOT_FOUND)

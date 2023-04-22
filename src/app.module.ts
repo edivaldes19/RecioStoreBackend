@@ -7,8 +7,10 @@ import { User } from './users/users.entity'
 import { AuthModule } from './auth/auth.module'
 import { RolesModule } from './roles/roles.module'
 import { Rol } from './roles/rol.entity'
-import { CategoriesModule } from './categories/categories.module';
-import { Category } from './categories/category.entity';
+import { CategoriesModule } from './categories/categories.module'
+import { Category } from './categories/category.entity'
+import { ProductsModule } from './products/products.module';
+import { Product } from './products/product.entity'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -18,13 +20,14 @@ import { Category } from './categories/category.entity';
       username: 'root',
       password: '17040053',
       database: 'recio_store',
-      entities: [User, Rol, Category],
+      entities: [User, Rol, Category, Product],
       synchronize: true
     }),
     UsersModule,
     AuthModule,
     RolesModule,
-    CategoriesModule
+    CategoriesModule,
+    ProductsModule
   ],
   controllers: [AppController],
   providers: [AppService]

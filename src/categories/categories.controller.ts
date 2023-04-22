@@ -13,21 +13,21 @@ export class CategoriesController {
     @Get()
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
-    async findAll() {
-        return await this.categoriesService.findAll()
+    async getCategories() {
+        return await this.categoriesService.getCategories()
     }
 
     @hasRoles(JwtRole.ADMIN)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
-    @Post('create')
+    @Post('createCategory')
     @UseInterceptors(FileInterceptor('file'))
-    async create(@UploadedFile(new ParseFilePipe({
+    async createCategory(@UploadedFile(new ParseFilePipe({
         validators: [
             new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
             new FileTypeValidator({ fileType: 'image/jpeg' })
         ]
     })) file: Express.Multer.File, @Body() category: CreateCategoryDto) {
-        return await this.categoriesService.create(file, category)
+        return await this.categoriesService.createCategory(file, category)
     }
 
     @hasRoles(JwtRole.ADMIN)
@@ -52,8 +52,8 @@ export class CategoriesController {
 
     @hasRoles(JwtRole.ADMIN)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
-    @Delete('delete/:id')
+    @Delete('deleteCategory/:id')
     async deleteCategory(@Param('id', ParseIntPipe) id: number) {
-        return await this.categoriesService.delete(id)
+        return await this.categoriesService.deleteCategory(id)
     }
 }

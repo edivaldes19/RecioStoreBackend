@@ -9,20 +9,12 @@ import { JwtRolesGuard } from '../auth/jwt/jwt-roles.guard'
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService) { }
-    @hasRoles(JwtRole.ADMIN)
-    @UseGuards(JwtAuthGuard, JwtRolesGuard)
-    @Get()
-    async findAll() {
-        return await this.usersService.findAll()
-    }
-
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Put('updateUser/:id')
     async updateUser(@Param('id', ParseIntPipe) id: number, @Body() user: UpdateUserDto) {
         return await this.usersService.updateUser(id, user)
     }
-
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Put('updateUserImage/:id')

@@ -1,17 +1,17 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { CreateCategoryDto } from './dto/create-category.dto'
-import storage = require('../utils/cloud_storage')
 import { InjectRepository } from '@nestjs/typeorm'
 import { Category } from './category.entity'
 import { Repository } from 'typeorm'
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto'
+import storage = require('../utils/cloud_storage')
 @Injectable()
 export class CategoriesService {
     constructor(@InjectRepository(Category) private categoriesRepository: Repository<Category>) { }
-    async findAll() {
+    async getCategories() {
         return await this.categoriesRepository.find()
     }
-    async create(file: Express.Multer.File, category: CreateCategoryDto) {
+    async createCategory(file: Express.Multer.File, category: CreateCategoryDto) {
         const url = await storage(file, file.originalname)
         if (url == undefined || url == null) throw new HttpException("Error al subir la imagen.", HttpStatus.INTERNAL_SERVER_ERROR)
         category.img = url
@@ -35,7 +35,7 @@ export class CategoriesService {
         categoryFound.img = url
         return await this.categoriesRepository.save(categoryFound)
     }
-    async delete(id: number) {
+    async deleteCategory(id: number) {
         const categoryFound = await this.categoriesRepository.findOneBy({ id })
         if (!categoryFound) throw new HttpException('Categoría inexistente.', HttpStatus.NOT_FOUND)
         return await this.categoriesRepository.delete(id)
