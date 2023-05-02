@@ -4,6 +4,6 @@ export class UpdateProductDto {
     img1?: string
     img2?: string
     price?: number
-    images_to_update?: Array<number>
     id_category?: number
+    images_to_update?: Array<number>
 }

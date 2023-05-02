@@ -17,23 +17,19 @@ export class ProductsService {
     }
     async createProduct(files: Array<Express.Multer.File>, product: CreateProductDto) {
         if (files.length == 0) throw new HttpException("Sin imágenes.", HttpStatus.NOT_FOUND)
-        let countFile = 0
+        let uploadedFiles = 0
         const newProduct = this.productsRepository.create(product)
         const savedProduct = await this.productsRepository.save(newProduct)
         await asyncForEach(files, async (file: Express.Multer.File) => {
             const url = await storage(file, file.originalname)
             if (url != undefined && url != null) {
-                switch (countFile) {
-                    case 0:
-                        savedProduct.img1 = url
-                        break
-                    case 1:
-                        savedProduct.img2 = url
-                        break
+                switch (uploadedFiles) {
+                    case 0: savedProduct.img1 = url; break
+                    case 1: savedProduct.img2 = url; break
                 }
             }
             await this.updateProduct(savedProduct.id, savedProduct)
-            countFile += 1
+            uploadedFiles++
         })
         return savedProduct
     }
@@ -46,23 +42,19 @@ export class ProductsService {
     async updateProductImages(files: Array<Express.Multer.File>, id: number, product: UpdateProductDto) {
         if (files.length == 0) throw new HttpException("Sin imágenes.", HttpStatus.NOT_FOUND)
         let counter = 0
-        let countFile = Number(product.images_to_update[counter])
+        let uploadedFiles = Number(product.images_to_update[counter])
         const updatedProduct = await this.updateProduct(id, product)
         await asyncForEach(files, async (file: Express.Multer.File) => {
             const url = await storage(file, file.originalname)
             if (url != undefined && url != null) {
-                switch (countFile) {
-                    case 0:
-                        updatedProduct.img1 = url
-                        break
-                    case 1:
-                        updatedProduct.img2 = url
-                        break
+                switch (uploadedFiles) {
+                    case 0: updatedProduct.img1 = url; break
+                    case 1: updatedProduct.img2 = url; break
                 }
             }
             await this.updateProduct(updatedProduct.id, updatedProduct)
             counter++
-            countFile = Number(product.images_to_update[counter])
+            uploadedFiles = Number(product.images_to_update[counter])
         })
         return updatedProduct
     }

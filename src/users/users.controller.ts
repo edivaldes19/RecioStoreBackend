@@ -15,6 +15,7 @@ export class UsersController {
     async updateUser(@Param('id', ParseIntPipe) id: number, @Body() user: UpdateUserDto) {
         return await this.usersService.updateUser(id, user)
     }
+
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Put('updateUserImage/:id')
