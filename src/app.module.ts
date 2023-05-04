@@ -11,6 +11,8 @@ import { CategoriesModule } from './categories/categories.module'
 import { Category } from './categories/category.entity'
 import { ProductsModule } from './products/products.module';
 import { Product } from './products/product.entity'
+import { AddressModule } from './address/address.module';
+import { Address } from './address/address.entity'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -20,14 +22,15 @@ import { Product } from './products/product.entity'
       username: 'root',
       password: '17040053',
       database: 'recio_store',
-      entities: [User, Rol, Category, Product],
+      entities: [User, Rol, Category, Product, Address],
       synchronize: true
     }),
     UsersModule,
     AuthModule,
     RolesModule,
     CategoriesModule,
-    ProductsModule
+    ProductsModule,
+    AddressModule
   ],
   controllers: [AppController],
   providers: [AppService]

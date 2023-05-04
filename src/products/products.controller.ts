@@ -10,16 +10,16 @@ import { UpdateProductDto } from './dto/update-product.dto'
 @Controller('products')
 export class ProductsController {
     constructor(private productsService: ProductsService) { }
-    @Get()
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
+    @Get()
     async getProducts() {
         return await this.productsService.getProducts()
     }
 
-    @Get('getProductsByCategory/:id_category')
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
+    @Get('getProductsByCategory/:id_category')
     async getProductsByCategory(@Param('id_category', ParseIntPipe) id_category: number) {
         return await this.productsService.getProductsByCategory(id_category)
     }

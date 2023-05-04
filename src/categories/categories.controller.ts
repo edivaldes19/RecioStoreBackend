@@ -10,9 +10,9 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 @Controller('categories')
 export class CategoriesController {
     constructor(private categoriesService: CategoriesService) { }
-    @Get()
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
+    @Get()
     async getCategories() {
         return await this.categoriesService.getCategories()
     }
