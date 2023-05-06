@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module, Delete } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -13,6 +13,9 @@ import { ProductsModule } from './products/products.module';
 import { Product } from './products/product.entity'
 import { AddressModule } from './address/address.module';
 import { Address } from './address/address.entity'
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/order.entity'
+import { OrderHasProducts } from './orders/order_has_products.entity'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -22,7 +25,7 @@ import { Address } from './address/address.entity'
       username: 'root',
       password: '17040053',
       database: 'recio_store',
-      entities: [User, Rol, Category, Product, Address],
+      entities: [User, Rol, Category, Product, Address, Order, OrderHasProducts],
       synchronize: true
     }),
     UsersModule,
@@ -30,7 +33,8 @@ import { Address } from './address/address.entity'
     RolesModule,
     CategoriesModule,
     ProductsModule,
-    AddressModule
+    AddressModule,
+    OrdersModule
   ],
   controllers: [AppController],
   providers: [AppService]

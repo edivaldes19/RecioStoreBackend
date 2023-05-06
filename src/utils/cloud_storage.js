@@ -1,7 +1,5 @@
 const { Storage } = require('@google-cloud/storage')
 const { format } = require('util')
-const env = require('../config/env')
-const url = require('url')
 const { v4: uuidv4 } = require('uuid')
 const uuid = uuidv4()
 const storage = new Storage({

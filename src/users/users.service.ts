@@ -10,12 +10,8 @@ export class UsersService {
     async updateUser(id: number, user: UpdateUserDto) {
         const userFound = await this.usersRepository.findOneBy({ id })
         if (!userFound) throw new HttpException('Usuario inexistente.', HttpStatus.NOT_FOUND)
-        const { name, surname, phone, notification_token } = user
-        userFound.name = name
-        userFound.surname = surname
-        userFound.phone = phone
-        userFound.notification_token = notification_token
-        return await this.usersRepository.save(userFound)
+        const updatedUser = Object.assign(userFound, user)
+        return await this.usersRepository.save(updatedUser)
     }
     async updateUserImage(id: number, file: Express.Multer.File) {
         const userFound = await this.usersRepository.findOneBy({ id })

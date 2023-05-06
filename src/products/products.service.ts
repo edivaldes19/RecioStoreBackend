@@ -6,9 +6,13 @@ import { Repository } from 'typeorm'
 import { CreateProductDto } from './dto/create-product.dto'
 import asyncForEach = require('../utils/async_foreach')
 import storage = require('../utils/cloud_storage')
+import { Category } from 'src/categories/category.entity'
 @Injectable()
 export class ProductsService {
-    constructor(@InjectRepository(Product) private productsRepository: Repository<Product>) { }
+    constructor(
+        @InjectRepository(Product) private productsRepository: Repository<Product>,
+        @InjectRepository(Category) private categoriesRepository: Repository<Category>
+    ) { }
     async getProducts() {
         return await this.productsRepository.find()
     }
@@ -16,6 +20,8 @@ export class ProductsService {
         return await this.productsRepository.findBy({ id_category })
     }
     async createProduct(files: Array<Express.Multer.File>, product: CreateProductDto) {
+        const categoryFound = await this.categoriesRepository.findOneBy({ id: product.id_category })
+        if (!categoryFound) throw new HttpException("Categoría inexistente.", HttpStatus.NOT_FOUND)
         if (files.length == 0) throw new HttpException("Sin imágenes.", HttpStatus.NOT_FOUND)
         let uploadedFiles = 0
         const newProduct = this.productsRepository.create(product)

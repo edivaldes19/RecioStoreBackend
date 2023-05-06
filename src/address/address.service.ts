@@ -4,14 +4,20 @@ import { Address } from './address.entity'
 import { Repository } from 'typeorm'
 import { CreateAddressDto } from './dto/create-address.dto'
 import { UpdateAddressDto } from './dto/update-address.dto'
+import { User } from 'src/users/users.entity'
 
 @Injectable()
 export class AddressService {
-    constructor(@InjectRepository(Address) private addressRepository: Repository<Address>) { }
+    constructor(
+        @InjectRepository(Address) private addressRepository: Repository<Address>,
+        @InjectRepository(User) private usersRepository: Repository<User>
+    ) { }
     async getAddressByUser(id_user: number) {
         return await this.addressRepository.findBy({ id_user })
     }
     async createAddress(address: CreateAddressDto) {
+        const userFound = await this.usersRepository.findOneBy({ id: address.id_user })
+        if (!userFound) throw new HttpException('Usuario inexistente.', HttpStatus.NOT_FOUND)
         const newAddress = this.addressRepository.create(address)
         return await this.addressRepository.save(newAddress)
     }

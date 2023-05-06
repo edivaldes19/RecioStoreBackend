@@ -14,15 +14,15 @@ export class AuthService {
         @InjectRepository(Rol) private rolesRepository: Repository<Rol>,
         private jwtService: JwtService
     ) { }
-    async signUp(user: SignUpAuthDto) {
-        const { email, phone } = user
-        const emailExist = await this.usersRepository.findOneBy({ email: email })
+    async signUp(signUpData: SignUpAuthDto) {
+        const { email, phone } = signUpData
+        const emailExist = await this.usersRepository.findOneBy({ email })
         if (emailExist) throw new HttpException('Correo electrónico existente.', HttpStatus.CONFLICT)
         const phoneExist = await this.usersRepository.findOneBy({ phone: phone })
         if (phoneExist) throw new HttpException('Teléfono existente.', HttpStatus.CONFLICT)
-        const newUser = this.usersRepository.create(user)
-        let rolesIds = []
-        if (user.rolesIds !== undefined && user.rolesIds !== null) rolesIds = user.rolesIds
+        const newUser = this.usersRepository.create(signUpData)
+        let rolesIds: string[] = []
+        if (signUpData.rolesIds != undefined && signUpData.rolesIds != null) rolesIds = signUpData.rolesIds
         else rolesIds.push('client')
         const roles = await this.rolesRepository.findBy({ id: In(rolesIds) })
         newUser.roles = roles

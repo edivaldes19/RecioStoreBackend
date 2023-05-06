@@ -17,7 +17,7 @@ export class CategoriesController {
         return await this.categoriesService.getCategories()
     }
 
-    @hasRoles(JwtRole.ADMIN)
+    @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Post('createCategory')
     @UseInterceptors(FileInterceptor('file'))
