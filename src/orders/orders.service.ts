@@ -28,36 +28,28 @@ export class OrdersService {
         const addressFound = await this.addressRepository.findOneBy({ id: order.id_address })
         if (!addressFound) throw new HttpException("Dirección inexistente.", HttpStatus.NOT_FOUND)
         if (order.products == undefined || order.products == null || order.products.length == 0) throw new HttpException("Sin productos.", HttpStatus.NOT_FOUND)
-        const productsIds = new Set<number>(order.products.map(prod => prod.id_product))
+        const productsIds = new Set<number>(order.products.map(prod => prod.id))
         const isProductsExist: boolean[] = []
-        let counter = 0
-        while (counter < productsIds.size) {
-            const productFound = await this.productsRepository.findOneBy({ id: [...productsIds][counter] })
+        for (const id of productsIds) {
+            const productFound = await this.productsRepository.findOneBy({ id })
             isProductsExist.push(productFound ? true : false)
-            counter++
         }
         if (isProductsExist.includes(false)) throw new HttpException("Algún producto no existe.", HttpStatus.NOT_FOUND)
         const newOrder = this.ordersRepository.create(order)
         const savedOrder = await this.ordersRepository.save(newOrder)
-        const savedOHP: OrderHasProducts[] = []
         for (const product of order.products) {
             const ohp = new OrderHasProducts()
             ohp.id_order = savedOrder.id
-            ohp.id_product = product.id_product
+            ohp.id_product = product.id
             ohp.quantity = product.quantity
-            savedOHP.push(await this.ohpRepository.save(ohp))
+            await this.ohpRepository.save(ohp)
         }
-        return { order: savedOrder, orderHasProducts: savedOHP }
+        return savedOrder
     }
     async updateOrderStatus(id: number) {
         const orderFound = await this.ordersRepository.findOneBy({ id })
         if (!orderFound) throw new HttpException("Orden inexistente.", HttpStatus.NOT_FOUND)
         const updatedOrder = Object.assign(orderFound, { status: 'ENTREGADO' })
-        return this.ordersRepository.save(updatedOrder)
-    }
-    async deleteOrder(id: number) {
-        const orderFound = await this.ordersRepository.findOneBy({ id })
-        if (!orderFound) throw new HttpException("Orden inexistente.", HttpStatus.NOT_FOUND)
-        return await this.ordersRepository.delete(id)
+        return await this.ordersRepository.save(updatedOrder)
     }
 }

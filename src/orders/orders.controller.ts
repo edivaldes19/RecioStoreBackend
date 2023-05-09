@@ -31,15 +31,8 @@ export class OrdersController {
 
     @hasRoles(JwtRole.ADMIN)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
-    @Put('updateOrder/:id')
-    async updateOrder(@Param('id', ParseIntPipe) id: number) {
+    @Put('updateOrderStatus/:id')
+    async updateOrderStatus(@Param('id', ParseIntPipe) id: number) {
         return await this.ordersService.updateOrderStatus(id)
-    }
-
-    @hasRoles(JwtRole.CLIENT)
-    @UseGuards(JwtAuthGuard, JwtRolesGuard)
-    @Put('deleteOrder/:id')
-    async deleteOrder(@Param('id', ParseIntPipe) id: number) {
-        return await this.ordersService.deleteOrder(id)
     }
 }

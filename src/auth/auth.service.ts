@@ -38,7 +38,7 @@ export class AuthService {
     }
     async logIn(loginData: LoginAuthDto) {
         const { email, password } = loginData
-        const userFound = await this.usersRepository.findOne({ where: { email: email }, relations: ['roles'] })
+        const userFound = await this.usersRepository.findOne({ where: { email }, relations: ['roles'] })
         if (!userFound) throw new HttpException('Correo electrónico inexistente.', HttpStatus.NOT_FOUND)
         const isPasswordValid = await compare(password, userFound.password)
         if (!isPasswordValid) throw new HttpException('Contraseña incorrecta.', HttpStatus.FORBIDDEN)
