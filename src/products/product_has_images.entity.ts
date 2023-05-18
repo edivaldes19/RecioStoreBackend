@@ -1,12 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
-import { Order } from "./order.entity"
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm"
 import { Product } from "src/products/product.entity"
-@Entity({ name: 'order_has_products' })
-export class OrderHasProducts {
-    @PrimaryColumn() id_order: number
+@Entity({ name: 'product_has_images' })
+export class ProductHasImages {
+    @PrimaryGeneratedColumn() id: number
     @PrimaryColumn() id_product: number
-    @Column({ default: 1 }) quantity: number
-    @ManyToOne(() => Order, order => order.id, { onUpdate: 'CASCADE', onDelete: 'CASCADE' }) @JoinColumn({ name: 'id_order' }) order: Order
+    @Column() img_url: string
     @ManyToOne(() => Product, product => product.id, { onUpdate: 'CASCADE', onDelete: 'CASCADE' }) @JoinColumn({ name: 'id_product' }) product: Product
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' }) created_at: Date
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' }) updated_at: Date

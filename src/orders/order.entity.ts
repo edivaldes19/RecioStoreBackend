@@ -1,6 +1,6 @@
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Address } from "src/address/address.entity"
 import { User } from "src/users/users.entity"
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { OrderHasProducts } from "./order_has_products.entity"
 @Entity({ name: 'orders' })
 export class Order {

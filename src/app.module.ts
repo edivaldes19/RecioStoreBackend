@@ -6,7 +6,7 @@ import { UsersModule } from './users/users.module'
 import { User } from './users/users.entity'
 import { AuthModule } from './auth/auth.module'
 import { RolesModule } from './roles/roles.module'
-import { Rol } from './roles/rol.entity'
+import { Role } from './roles/rol.entity'
 import { CategoriesModule } from './categories/categories.module'
 import { Category } from './categories/category.entity'
 import { ProductsModule } from './products/products.module';
@@ -16,6 +16,9 @@ import { Address } from './address/address.entity'
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/order.entity'
 import { OrderHasProducts } from './orders/order_has_products.entity'
+import { InfoModule } from './info/info.module';
+import { Info } from './info/info.entity';
+import { ProductHasImages } from './products/product_has_images.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -25,7 +28,7 @@ import { OrderHasProducts } from './orders/order_has_products.entity'
       username: 'root',
       password: '17040053',
       database: 'recio_store',
-      entities: [User, Rol, Category, Product, Address, Order, OrderHasProducts],
+      entities: [User, Role, Category, Product, Address, Order, OrderHasProducts, Info, ProductHasImages],
       synchronize: true
     }),
     UsersModule,
@@ -34,7 +37,8 @@ import { OrderHasProducts } from './orders/order_has_products.entity'
     CategoriesModule,
     ProductsModule,
     AddressModule,
-    OrdersModule
+    OrdersModule,
+    InfoModule
   ],
   controllers: [AppController],
   providers: [AppService]

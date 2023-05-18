@@ -9,28 +9,28 @@ import { UpdateAddressDto } from './dto/update-address.dto'
 @Controller('address')
 export class AddressController {
     constructor(private addressService: AddressService) { }
-    @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
+    @hasRoles(JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Get('getAddressByUser/:id_user')
     async getAddressByUser(@Param('id_user', ParseIntPipe) id_user: number) {
         return await this.addressService.getAddressByUser(id_user)
     }
 
-    @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
+    @hasRoles(JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Post('createAddress')
     async createAddress(@Body() address: CreateAddressDto) {
         return await this.addressService.createAddress(address)
     }
 
-    @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
+    @hasRoles(JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Put('updateAddress/:id')
     async updateAddress(@Param('id', ParseIntPipe) id: number, @Body() address: UpdateAddressDto) {
         return await this.addressService.updateAddress(id, address)
     }
 
-    @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
+    @hasRoles(JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Delete('deleteAddress/:id')
     async deleteAddress(@Param('id', ParseIntPipe) id: number) {

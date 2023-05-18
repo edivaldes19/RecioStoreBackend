@@ -4,8 +4,8 @@ import { RolesService } from './roles.service'
 @Controller('roles')
 export class RolesController {
     constructor(private rolesService: RolesService) { }
-    @Post('create')
-    async create(@Body() rol: CreateRolDto) {
-        return await this.rolesService.create(rol)
+    @Post('createRole')
+    async createRole(@Body() role: CreateRolDto) {
+        return await this.rolesService.createRole(role)
     }
 }

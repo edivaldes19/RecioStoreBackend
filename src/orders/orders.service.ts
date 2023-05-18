@@ -23,9 +23,9 @@ export class OrdersService {
         return await this.ordersRepository.find({ where: { id_client }, relations: ['user', 'address', 'ohp.product'] })
     }
     async createOrder(order: CreateOrderDto) {
-        const userFound = await this.usersRepository.findOneBy({ id: order.id_client })
+        const userFound = await this.usersRepository.exist({ where: { id: order.id_client } })
         if (!userFound) throw new HttpException("Usuario inexistente.", HttpStatus.NOT_FOUND)
-        const addressFound = await this.addressRepository.findOneBy({ id: order.id_address })
+        const addressFound = await this.addressRepository.exist({ where: { id: order.id_address } })
         if (!addressFound) throw new HttpException("Dirección inexistente.", HttpStatus.NOT_FOUND)
         if (order.products == undefined || order.products == null || order.products.length == 0) throw new HttpException("Sin productos.", HttpStatus.NOT_FOUND)
         const productsIds = new Set<number>(order.products.map(prod => prod.id))

@@ -5,7 +5,6 @@ import { Repository } from 'typeorm'
 import { CreateAddressDto } from './dto/create-address.dto'
 import { UpdateAddressDto } from './dto/update-address.dto'
 import { User } from 'src/users/users.entity'
-
 @Injectable()
 export class AddressService {
     constructor(
@@ -16,7 +15,7 @@ export class AddressService {
         return await this.addressRepository.findBy({ id_user })
     }
     async createAddress(address: CreateAddressDto) {
-        const userFound = await this.usersRepository.findOneBy({ id: address.id_user })
+        const userFound = await this.usersRepository.exist({ where: { id: address.id_user } })
         if (!userFound) throw new HttpException('Usuario inexistente.', HttpStatus.NOT_FOUND)
         const newAddress = this.addressRepository.create(address)
         return await this.addressRepository.save(newAddress)
@@ -28,7 +27,7 @@ export class AddressService {
         return await this.addressRepository.save(updatedAddress)
     }
     async deleteAddress(id: number) {
-        const addressFound = await this.addressRepository.findOneBy({ id })
+        const addressFound = await this.addressRepository.exist({ where: { id } })
         if (!addressFound) throw new HttpException("Dirección inexistente.", HttpStatus.NOT_FOUND)
         return await this.addressRepository.delete(id)
     }

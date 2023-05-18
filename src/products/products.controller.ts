@@ -1,7 +1,6 @@
-import { Controller, FileTypeValidator, MaxFileSizeValidator, ParseFilePipe, UseGuards, UseInterceptors, Body, Post, Get, Put, Param, ParseIntPipe, Delete, UploadedFiles, Query, DefaultValuePipe } from '@nestjs/common'
+import { Controller, UseGuards, Body, Post, Get, Put, Param, ParseIntPipe, Delete, Query, DefaultValuePipe } from '@nestjs/common'
 import { ProductsService } from './products.service'
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard'
-import { FilesInterceptor } from '@nestjs/platform-express'
 import { hasRoles } from 'src/auth/jwt/has-roles'
 import { JwtRole } from 'src/auth/jwt/jwt-role'
 import { JwtRolesGuard } from '../auth/jwt/jwt-roles.guard'
@@ -47,14 +46,8 @@ export class ProductsController {
     @hasRoles(JwtRole.ADMIN)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Post('createProduct')
-    @UseInterceptors(FilesInterceptor('files[]', 2))
-    async createProduct(@UploadedFiles(new ParseFilePipe({
-        validators: [
-            new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
-            new FileTypeValidator({ fileType: 'image/jpeg' })
-        ]
-    })) files: Array<Express.Multer.File>, @Body() product: CreateProductDto) {
-        return await this.productsService.createProduct(files, product)
+    async createProduct(@Body() product: CreateProductDto) {
+        return await this.productsService.createProduct(product)
     }
 
     @hasRoles(JwtRole.ADMIN)
@@ -62,19 +55,6 @@ export class ProductsController {
     @Put('updateProduct/:id')
     async updateProduct(@Param('id', ParseIntPipe) id: number, @Body() product: UpdateProductDto) {
         return await this.productsService.updateProduct(id, product)
-    }
-
-    @hasRoles(JwtRole.ADMIN)
-    @UseGuards(JwtAuthGuard, JwtRolesGuard)
-    @Put('updateProductImages/:id')
-    @UseInterceptors(FilesInterceptor('files[]', 2))
-    async updateProductImages(@UploadedFiles(new ParseFilePipe({
-        validators: [
-            new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
-            new FileTypeValidator({ fileType: 'image/jpeg' })
-        ]
-    })) files: Array<Express.Multer.File>, @Param('id', ParseIntPipe) id: number, @Body() product: UpdateProductDto) {
-        return await this.productsService.updateProductImages(files, id, product)
     }
 
     @hasRoles(JwtRole.ADMIN)

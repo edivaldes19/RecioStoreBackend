@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsString, IsUrl, MinLength } from 'class-validator'
 export class CreateRolDto {
     @IsNotEmpty() @IsString() id: string
-    @IsNotEmpty() @IsString() name: string
-    @IsNotEmpty() @IsString() img: string
+    @IsNotEmpty() @IsString() @MinLength(5) name: string
+    @IsNotEmpty() @IsString() @IsUrl() img: string
     @IsNotEmpty() @IsString() route: string
 }

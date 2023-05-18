@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, ManyToMany, JoinTable, OneToMany } from "typeorm"
 import { hash } from "bcrypt"
-import { Rol } from "src/roles/rol.entity"
+import { Role } from "src/roles/rol.entity"
 import { Address } from "src/address/address.entity"
 import { Order } from "src/orders/order.entity"
 @Entity({ name: 'users' })
@@ -20,7 +20,7 @@ export class User {
             inverseJoinColumn: { name: 'id_rol' }
         }
     )
-    @ManyToMany(() => Rol, rol => rol.users) roles: Rol[]
+    @ManyToMany(() => Role, rol => rol.users) roles: Role[]
     @OneToMany(() => Address, address => address.id) address: Address
     @OneToMany(() => Order, order => order.id) order: Order
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' }) created_at: Date
