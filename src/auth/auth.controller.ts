@@ -7,6 +7,7 @@ import { JwtRole } from './jwt/jwt-role'
 import { JwtAuthGuard } from './jwt/jwt-auth.guard'
 import { JwtRolesGuard } from './jwt/jwt-roles.guard'
 import { PasswordAuthDto } from './dto/password-auth.dto'
+import { NotifTokenAuthDto } from './dto/notiftoken-auth.dto'
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
@@ -25,6 +26,11 @@ export class AuthController {
     @Put('updatePassword/:id')
     async updatePassword(@Param('id', ParseIntPipe) id: number, @Body() passworData: PasswordAuthDto) {
         return await this.authService.updatePassword(id, passworData)
+    }
+
+    @Put('updateNotificationToken/:id')
+    async updateNotificationToken(@Param('id', ParseIntPipe) id: number, @Body() notifData: NotifTokenAuthDto) {
+        return await this.authService.updateNotificationToken(id, notifData)
     }
 
     @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)

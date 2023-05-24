@@ -5,11 +5,13 @@ import { User } from './users.entity'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { JwtRole } from 'src/auth/jwt/jwt-role'
 import { Role } from 'src/roles/rol.entity'
+import { JwtService } from '@nestjs/jwt'
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>,
-        @InjectRepository(Role) private rolesRepository: Repository<Role>
+        @InjectRepository(Role) private rolesRepository: Repository<Role>,
+        private jwtService: JwtService
     ) { }
     async getUsers(id: number) {
         const myUserFound = await this.usersRepository.exist({ where: { id } })
@@ -33,7 +35,15 @@ export class UsersService {
         }
         const roles = await this.rolesRepository.findBy({ id: In(rolesIds) })
         userFound.roles = roles
-        return await this.usersRepository.save(userFound)
+        const userSaved = await this.usersRepository.save(userFound)
+        const rolesString = userSaved.roles.map(rol => rol.id)
+        const token = this.jwtService.sign({ id: userSaved.id, name: userSaved.name, roles: rolesString })
+        const data = {
+            user: userSaved,
+            token: `Bearer ${token}`
+        }
+        delete data.user.password
+        return data
     }
     async updateUserToAdmin(id: number) {
         const userFound = await this.usersRepository.findOne({ where: { id }, relations: ['roles'] })
@@ -44,6 +54,14 @@ export class UsersService {
         rolesIds.push(JwtRole.ADMIN)
         const roles = await this.rolesRepository.findBy({ id: In(rolesIds) })
         userFound.roles = roles
-        return await this.usersRepository.save(userFound)
+        const userSaved = await this.usersRepository.save(userFound)
+        const rolesString = userSaved.roles.map(rol => rol.id)
+        const token = this.jwtService.sign({ id: userSaved.id, name: userSaved.name, roles: rolesString })
+        const data = {
+            user: userSaved,
+            token: `Bearer ${token}`
+        }
+        delete data.user.password
+        return data
     }
 }

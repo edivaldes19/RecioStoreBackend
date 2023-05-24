@@ -8,8 +8,7 @@ import { jwtConstants } from './jwt/jwt.constants'
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { Role } from '../roles/rol.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Role]),
-  JwtModule.register({ secret: jwtConstants.secret })],
+  imports: [TypeOrmModule.forFeature([User, Role]), JwtModule.register({ secret: jwtConstants.secret })],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController]
 })

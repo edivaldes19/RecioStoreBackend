@@ -7,6 +7,7 @@ import { CreateOrderDto } from './dto/create-order.dto'
 import { User } from 'src/users/users.entity'
 import { Address } from 'src/address/address.entity'
 import { Product } from 'src/products/product.entity'
+import { FirebaseAdmin, InjectFirebaseAdmin } from 'nestjs-firebase'
 @Injectable()
 export class OrdersService {
     constructor(
@@ -14,13 +15,14 @@ export class OrdersService {
         @InjectRepository(OrderHasProducts) private ohpRepository: Repository<OrderHasProducts>,
         @InjectRepository(User) private usersRepository: Repository<User>,
         @InjectRepository(Address) private addressRepository: Repository<Address>,
-        @InjectRepository(Product) private productsRepository: Repository<Product>
+        @InjectRepository(Product) private productsRepository: Repository<Product>,
+        @InjectFirebaseAdmin() private readonly firebase: FirebaseAdmin
     ) { }
     async getOrders() {
-        return await this.ordersRepository.find({ relations: ['user', 'address', 'ohp.product'] })
+        return await this.ordersRepository.find({ relations: ['user', 'address', 'ohp.product.phi'] })
     }
     async getOrdersByClient(id_client: number) {
-        return await this.ordersRepository.find({ where: { id_client }, relations: ['user', 'address', 'ohp.product'] })
+        return await this.ordersRepository.find({ where: { id_client }, relations: ['user', 'address', 'ohp.product.phi'] })
     }
     async createOrder(order: CreateOrderDto) {
         const userFound = await this.usersRepository.exist({ where: { id: order.id_client } })
@@ -31,8 +33,8 @@ export class OrdersService {
         const productsIds = new Set<number>(order.products.map(prod => prod.id))
         const isProductsExist: boolean[] = []
         for (const id of productsIds) {
-            const productFound = await this.productsRepository.findOneBy({ id })
-            isProductsExist.push(productFound ? true : false)
+            const productFound = await this.productsRepository.exist({ where: { id } })
+            isProductsExist.push(productFound)
         }
         if (isProductsExist.includes(false)) throw new HttpException("Algún producto no existe.", HttpStatus.NOT_FOUND)
         const newOrder = this.ordersRepository.create(order)
@@ -47,9 +49,18 @@ export class OrdersService {
         return savedOrder
     }
     async updateOrderStatus(id: number) {
-        const orderFound = await this.ordersRepository.findOneBy({ id })
+        const orderFound = await this.ordersRepository.findOne({ where: { id }, relations: ['user', 'address', 'ohp'] })
         if (!orderFound) throw new HttpException("Orden inexistente.", HttpStatus.NOT_FOUND)
-        const updatedOrder = Object.assign(orderFound, { status: 'ENTREGADO' })
-        return await this.ordersRepository.save(updatedOrder)
+        const updatedOrder = Object.assign(orderFound, { status: 'PREPARADO' })
+        const orderSaved = await this.ordersRepository.save(updatedOrder)
+        await this.firebase.messaging.send({
+            token: orderSaved.user.notification_token,
+            notification: {
+                imageUrl: orderSaved.user.img,
+                title: `Orden preparada`,
+                body: `Hola ${orderSaved.user.name}, te informamos que tu Orden #${orderSaved.id} será entregada a ${orderSaved.address.address} en los proximos minutos.\nGracias por tu compra.`
+            }
+        })
+        return orderSaved
     }
 }

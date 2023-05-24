@@ -22,14 +22,12 @@ export class UsersController {
         return await this.usersService.updateUser(id, user)
     }
 
-    @hasRoles(JwtRole.ADMIN)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Put('updateUserToClient/:id')
     async updateUserToClient(@Param('id', ParseIntPipe) id: number) {
         return await this.usersService.updateUserToClient(id)
     }
 
-    @hasRoles(JwtRole.ADMIN, JwtRole.CLIENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Put('updateUserToAdmin/:id')
     async updateUserToAdmin(@Param('id', ParseIntPipe) id: number) {

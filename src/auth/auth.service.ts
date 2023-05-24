@@ -3,12 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { In, Repository } from 'typeorm'
 import { User } from '../users/users.entity'
 import { SignUpAuthDto } from './dto/signup-auth.dto'
-import { LogInAuthDto } from './dto/login-auth.dto';
+import { LogInAuthDto } from './dto/login-auth.dto'
 import { compare, hash } from "bcrypt"
 import { JwtService } from '@nestjs/jwt'
 import { Role } from 'src/roles/rol.entity'
 import { JwtRole } from './jwt/jwt-role'
-import { PasswordAuthDto } from './dto/password-auth.dto';
+import { PasswordAuthDto } from './dto/password-auth.dto'
+import { NotifTokenAuthDto } from './dto/notiftoken-auth.dto'
 @Injectable()
 export class AuthService {
     constructor(
@@ -55,16 +56,24 @@ export class AuthService {
     }
     async updatePassword(id: number, passworData: PasswordAuthDto) {
         const { oldPassword, newPassword } = passworData
-        const userFound = await this.usersRepository.findOneBy({ id })
+        const userFound = await this.usersRepository.findOne({ where: { id }, relations: ['roles'] })
         if (!userFound) throw new HttpException("Usuario(a) inexistente.", HttpStatus.NOT_FOUND)
         const isPasswordValid = await compare(oldPassword, userFound.password)
         if (!isPasswordValid) throw new HttpException('Contraseña incorrecta.', HttpStatus.FORBIDDEN)
         userFound.password = await hash(newPassword, Number(process.env.HASH_SALT))
         return await this.usersRepository.save(userFound)
     }
-    async deleteAccount(id: number) {
-        const userFound = await this.usersRepository.exist({ where: { id } })
+    async updateNotificationToken(id: number, notifData: NotifTokenAuthDto) {
+        const { notification_token } = notifData
+        const userFound = await this.usersRepository.findOne({ where: { id }, relations: ['roles'] })
         if (!userFound) throw new HttpException("Usuario(a) inexistente.", HttpStatus.NOT_FOUND)
-        return await this.usersRepository.delete(id)
+        const updatedUser = Object.assign(userFound, { notification_token })
+        return await this.usersRepository.save(updatedUser)
+    }
+    async deleteAccount(id: number) {
+        const userFound = await this.usersRepository.findOne({ where: { id }, relations: ['roles'] })
+        if (!userFound) throw new HttpException("Usuario(a) inexistente.", HttpStatus.NOT_FOUND)
+        await this.usersRepository.delete(id)
+        return { url: userFound.img }
     }
 }

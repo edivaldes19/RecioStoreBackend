@@ -6,8 +6,10 @@ import { User } from './users.entity'
 import { JwtStrategy } from '../auth/jwt/jwt.strategy'
 import { Role } from '../roles/rol.entity'
 import { Order } from 'src/orders/order.entity'
+import { jwtConstants } from 'src/auth/jwt/jwt.constants'
+import { JwtModule } from '@nestjs/jwt'
 @Module({
-    imports: [TypeOrmModule.forFeature([User, Role, Order])],
+    imports: [TypeOrmModule.forFeature([User, Role, Order]), JwtModule.register({ secret: jwtConstants.secret })],
     providers: [UsersService, JwtStrategy],
     controllers: [UsersController]
 })
